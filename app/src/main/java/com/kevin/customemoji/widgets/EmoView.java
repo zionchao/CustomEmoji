@@ -16,7 +16,7 @@ import com.kevin.customemoji.R;
  * Created by zhangchao_a on 2016/11/7.
  */
 
-public class EmoView extends LinearLayout implements View.OnClickListener,ViewPager.OnPageChangeListener{
+public class EmoView extends LinearLayout implements View.OnClickListener,ViewPager.OnPageChangeListener, EmoGroupView.OnEmoGroupChangeListener {
     private EmoGroupView mEmoGroupView;
     private EmoDotView mEmoDotView;
     private Button mEmoSendBtn;
@@ -46,7 +46,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         this.context=context;
         LayoutInflater.from(context).inflate(R.layout.emo_container_view,this);
         mEmoDotView=(EmoDotView)findViewById(R.id.mEmoDotView);
-        mEmoGroupView=(EmoGroupView)findViewById(R.id.mEmoGroupView);
+
         mEmoSendBtn=(Button)findViewById(R.id.mEmoSendBtn);
         mEmoSendBtn.setOnClickListener(this);
         mEmoViewPager=(ViewPager)findViewById(R.id.mEmoViewPager);
@@ -54,6 +54,9 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         mEmoViewPager.setAdapter(adapter);
 //        mEmoViewPager.setOnPageChangeListener(this);
         mEmoViewPager.addOnPageChangeListener(this);
+
+        mEmoGroupView=(EmoGroupView)findViewById(R.id.mEmoGroupView);
+        mEmoGroupView.initData(this);
     }
 
     public void initData(OnEmoClickListener listener){
@@ -69,6 +72,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         }
     }
 
+
     class EmoPagerAdapter extends PagerAdapter{
         public EmoPagerAdapter() {
             super();
@@ -77,7 +81,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         @Override
         public int getCount() {
 //      FIXME  test ,the count should be sum(group page)
-            return 5;
+            return 7;
         }
 
         @Override
@@ -87,10 +91,19 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            EmoNormalGrid normal= new EmoNormalGrid(context);
-            normal.initData(position,listener);
-            container.addView(normal);
-            return normal;
+           if (position<5)
+           {
+               EmoNormalGrid normal= new EmoNormalGrid(context);
+               normal.initData(position,listener);
+               container.addView(normal);
+               return normal;
+           }else{
+               EmoCustomGrid custom= new EmoCustomGrid(context);
+               custom.initData(position,listener);
+               container.addView(custom);
+               return custom;
+           }
+
         }
 
         @Override
@@ -114,6 +127,16 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
 
     @Override
     public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onGroupChanged(int position) {
+        if (position==0)
+        {
+            mEmoViewPager.setCurrentItem(0);
+        }else
+            mEmoViewPager.setCurrentItem(5);
 
     }
 }

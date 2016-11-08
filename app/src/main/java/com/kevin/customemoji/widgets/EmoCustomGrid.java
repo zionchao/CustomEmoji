@@ -21,4 +21,7 @@ public class EmoCustomGrid extends GridView {
     public EmoCustomGrid(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
+
+    public void initData(int position, OnEmoClickListener listener) {
+    }
 }

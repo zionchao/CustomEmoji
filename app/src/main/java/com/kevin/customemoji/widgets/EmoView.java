@@ -46,7 +46,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         this.context=context;
         LayoutInflater.from(context).inflate(R.layout.emo_container_view,this);
         mEmoDotView=(EmoDotView)findViewById(R.id.mEmoDotView);
-
+        mEmoDotView.notifyDataChanged(0,5);
         mEmoSendBtn=(Button)findViewById(R.id.mEmoSendBtn);
         mEmoSendBtn.setOnClickListener(this);
         mEmoViewPager=(ViewPager)findViewById(R.id.mEmoViewPager);
@@ -115,14 +115,13 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
     }
 
     @Override
     public void onPageSelected(int position) {
         int curGroupPosition=0;
         int count=0;
-        mEmoDotView.notifyDataChanged(curGroupPosition,count);
+        mEmoDotView.notifyDataChanged(curGroupPosition,5);
     }
 
     @Override

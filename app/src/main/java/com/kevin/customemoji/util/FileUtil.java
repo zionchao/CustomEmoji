@@ -14,7 +14,7 @@ import java.io.File;
  */
 public class FileUtil {
 	public static String ROOT = Environment.getExternalStorageDirectory().getAbsolutePath();
-	public final static String APP = "stay4it";
+	public final static String APP = "kevin";
 	public final static String TMP = "tmp";
 
 	public static String getAppRoot() {

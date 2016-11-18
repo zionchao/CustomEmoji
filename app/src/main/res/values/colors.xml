@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="widgets_dot_pressed">#8c8c8c</color>
+    <color name="widgets_dot_normal">#bcbcbc</color>
+    <color name="widgets_emo_pannel_bg">#ffffff</color>
+    <color name="widgets_emo_tab_pressed">#c8c8c8</color>
+    <color name="widgets_emo_tab_normal">#ffffff</color>
+    <color name="widgets_emo_tab_label">#878787</color>
+    <color name="widgets_general_row_line">#e5e5e5</color>
 </resources>

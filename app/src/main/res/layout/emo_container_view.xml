@@ -8,14 +8,15 @@
     >
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="120dp"
         android:id="@+id/mEmoViewPager"
         />
 
     <com.kevin.customemoji.widgets.EmoDotView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:id="@+id/mEmoDotView"
+        android:padding="10dp"
         />
 
     <RelativeLayout

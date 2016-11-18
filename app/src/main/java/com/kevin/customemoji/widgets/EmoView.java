@@ -24,6 +24,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
     private EmoPagerAdapter adapter;
     private OnEmoClickListener listener;
     private Context context;
+    private int groupIndex;
 
     public EmoView(Context context) {
         super(context);
@@ -46,7 +47,7 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         this.context=context;
         LayoutInflater.from(context).inflate(R.layout.emo_container_view,this);
         mEmoDotView=(EmoDotView)findViewById(R.id.mEmoDotView);
-        mEmoDotView.notifyDataChanged(0,5);
+//        mEmoDotView.notifyDataChanged(0,5);
         mEmoSendBtn=(Button)findViewById(R.id.mEmoSendBtn);
         mEmoSendBtn.setOnClickListener(this);
         mEmoViewPager=(ViewPager)findViewById(R.id.mEmoViewPager);
@@ -56,12 +57,15 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
         mEmoViewPager.addOnPageChangeListener(this);
 
         mEmoGroupView=(EmoGroupView)findViewById(R.id.mEmoGroupView);
-        mEmoGroupView.initData(this);
+        mEmoGroupView.initData(this,0);
+
     }
 
     public void initData(OnEmoClickListener listener){
         this.listener=listener;
+//        onPageSelected(0);
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId())
@@ -74,14 +78,10 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
 
 
     class EmoPagerAdapter extends PagerAdapter{
-        public EmoPagerAdapter() {
-            super();
-        }
 
         @Override
         public int getCount() {
-//      FIXME  test ,the count should be sum(group page)
-            return 7;
+            return EmoGroupManager.getInstance().getTotalPage();
         }
 
         @Override
@@ -91,18 +91,23 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-           if (position<5)
-           {
-               EmoNormalGrid normal= new EmoNormalGrid(context);
-               normal.initData(position,listener);
-               container.addView(normal);
-               return normal;
-           }else{
-               EmoCustomGrid custom= new EmoCustomGrid(context);
-               custom.initData(position,listener);
-               container.addView(custom);
-               return custom;
-           }
+
+            EmoPage page=EmoGroupManager.getInstance().getEmoPage(position);
+            EmoGroup group=EmoGroupManager.getInstance().getEmoGroup(page.groupIndex);
+            switch (group.type){
+                case normal:
+                    EmoNormalGrid normal= new EmoNormalGrid(context);
+                    normal.initData(page.innerIndex,listener);
+                    container.addView(normal);
+                    return normal;
+                case custom:
+                    EmoCustomGrid custom= new EmoCustomGrid(context);
+                    custom.initData(group,page.innerIndex,listener);
+                    container.addView(custom);
+                    return custom;
+                default:
+                    return null;
+            }
 
         }
 
@@ -118,10 +123,15 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
     }
 
     @Override
-    public void onPageSelected(int position) {
-        int curGroupPosition=0;
-        int count=0;
-        mEmoDotView.notifyDataChanged(curGroupPosition,5);
+    public void onPageSelected(int pageIndex) {
+//        int curGroupPosition=0;
+//        int count=0;
+        EmoPage page=EmoGroupManager.getInstance().getEmoPage(pageIndex);
+        mEmoDotView.notifyDataChanged(page.innerIndex,page.groupCount);
+        if (page.groupIndex!=groupIndex){
+            mEmoGroupView.notifyDataChanged(page.groupIndex);
+            groupIndex=page.groupIndex;
+        }
     }
 
     @Override
@@ -130,12 +140,17 @@ public class EmoView extends LinearLayout implements View.OnClickListener,ViewPa
     }
 
     @Override
-    public void onGroupChanged(int position) {
-        if (position==0)
-        {
-            mEmoViewPager.setCurrentItem(0);
-        }else
-            mEmoViewPager.setCurrentItem(5);
+    public void onGroupChanged(int groupIndex) {
+        EmoGroup group=EmoGroupManager.getInstance().getEmoGroup(groupIndex);
+        this.groupIndex=groupIndex;
+        mEmoViewPager.setCurrentItem(group.startIndex);
+        mEmoDotView.notifyDataChanged(0,group.page);
+
+//        if (position==1)
+//        {
+//            mEmoViewPager.setCurrentItem(0);
+//        }else
+//            mEmoViewPager.setCurrentItem(5);
 
     }
 }

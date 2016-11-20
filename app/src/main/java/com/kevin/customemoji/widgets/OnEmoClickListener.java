@@ -9,5 +9,5 @@ public interface OnEmoClickListener {
     void onDeleteButtonClick();
     void onEmoSendClick();
 
-    void onNormalEmoClick();
+    void onNormalEmoClick(String s, int i);
 }

@@ -1,19 +1,26 @@
 package com.kevin.customemoji;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.kevin.customemoji.widgets.EmoParse;
 import com.kevin.customemoji.widgets.EmoView;
 import com.kevin.customemoji.widgets.OnEmoClickListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements OnEmoClickListener {
 
@@ -21,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements OnEmoClickListene
     private ListView mMainListView;
     private EditText mMainEt;
     private Button mMainBtn;
+    private ArrayList<String> messagesList=new ArrayList<>();
+    private ChatAdapter adapter;
 
 
     @Override
@@ -32,28 +41,18 @@ public class MainActivity extends AppCompatActivity implements OnEmoClickListene
 
     private void initView() {
         mMainListView=(ListView)findViewById(R.id.mMainListView);
+        adapter=new ChatAdapter();
+        mMainListView.setAdapter(adapter);
         mMainEt=(EditText)findViewById(R.id.mMainEt);
-        mMainEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         mMainBtn=(Button)findViewById(R.id.mMainBtn);
         mMainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String content=mMainEt.getText().toString();
+                messagesList.add(content);
+                adapter.notifyDataSetChanged();
+                mMainEt.setText("");
             }
         });
 
@@ -69,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements OnEmoClickListene
 
     @Override
     public void onDeleteButtonClick() {
+        mMainEt.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DEL));
+        mMainEt.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_DEL));
+
 
     }
 
@@ -78,29 +80,47 @@ public class MainActivity extends AppCompatActivity implements OnEmoClickListene
     }
 
     @Override
-    public void onNormalEmoClick() {
-        Toast.makeText(this,"haha",Toast.LENGTH_LONG).show();
+    public void onNormalEmoClick(String emo,int resId) {
+//        Toast.makeText(this,"haha",Toast.LENGTH_LONG).show();
+        Editable editable=mMainEt.getText();
+        int index=mMainEt.getSelectionEnd();
+        emo="["+emo+"]";
+        SpannableStringBuilder builder=new SpannableStringBuilder(emo);
+        Drawable d=getResources().getDrawable(resId);
+        d.setBounds(0,0,100,100);
+        ImageSpan span=new ImageSpan(d);
+        builder.setSpan(span,0,emo.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if(index<mMainEt.length())
+        {
+            editable.insert(index,builder);
+        }else {
+            editable.append(builder);
+        }
+        mMainEt.setSelection(index+emo.length());
     }
 
     class ChatAdapter extends BaseAdapter{
         @Override
         public int getCount() {
-            return 0;
+            return messagesList.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return messagesList.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            TextView textview=new TextView(MainActivity.this);
+            String content=messagesList.get(position);
+            textview.setText(EmoParse.parseEmo(MainActivity.this,content));
+            return textview;
         }
     }
 }

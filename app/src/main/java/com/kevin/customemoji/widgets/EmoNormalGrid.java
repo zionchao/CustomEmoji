@@ -61,7 +61,8 @@ public class EmoNormalGrid extends GridView implements AdapterView.OnItemClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position!=20)
         {
-            listener.onNormalEmoClick();
+            int res=position+curPosition*20;
+            listener.onNormalEmoClick("smiley_"+(position<10?"0"+position:position),startResId+position);
         }else
         {
             listener.onDeleteButtonClick();
